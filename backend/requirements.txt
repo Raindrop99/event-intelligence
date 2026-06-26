@@ -1,0 +1,10 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+requests>=2.31
+pymongo>=4.6
+psycopg2-binary>=2.9
+apscheduler>=3.10
+python-dotenv>=1.0
+yfinance>=0.2.40
+anthropic>=0.34
+google-genai>=1.0

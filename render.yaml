@@ -1,0 +1,44 @@
+# Render Blueprint for the FastAPI backend.
+# Frontend deploys separately on Vercel; MongoDB on Atlas; Postgres on Neon.
+# In Render: New + → Blueprint → pick the repo. Values marked `sync: false`
+# are SECRET — Render prompts for them (they are never stored in this file/git).
+services:
+  - type: web
+    name: event-intelligence-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: DATA_MODE
+        value: live
+      - key: ANALYSIS
+        value: llm
+      - key: LLM_PROVIDER
+        value: gemini
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash-lite
+      - key: LLM_DAILY_REQUESTS
+        value: "20"
+      - key: MONGO_DB
+        value: media_risk
+      # ----- secrets: set these in the Render dashboard -----
+      - key: CORS_ORIGINS        # e.g. https://your-app.vercel.app
+        sync: false
+      - key: MONGO_URI           # Atlas: mongodb+srv://user:pass@cluster.../?retryWrites=true
+        sync: false
+      - key: DATABASE_URL        # Neon: postgresql://user:pass@host/db?sslmode=require
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GNEWS_KEY
+        sync: false
+      - key: FINNHUB_KEY
+        sync: false
+      - key: NEWSAPI_KEY
+        sync: false

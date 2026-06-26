@@ -1,0 +1,33 @@
+# ===== secrets — NEVER commit =====
+**/.env
+**/.env.local
+**/.env.*.local
+# keep the templates
+!**/.env.example
+!**/.env.local.example
+
+# ===== python (backend) =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+
+# ===== node / next (frontend) =====
+node_modules/
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+.vercel/
+
+# ===== os / editor =====
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
