@@ -25,29 +25,30 @@ export const CLABEL: Record<string, string> = {
   confidence: "Market mood", currency_trade: "Currency & trade",
 };
 export const DLABEL: Record<string, string> = {
-  market: "Market", policy: "Policy", disaster: "Disaster",
-  health: "Health", supply_chain: "Supply chain", other: "Other",
+  market: "Market", policy: "Policy", disaster: "Disaster", defence: "Defence",
+  health: "Health", supply_chain: "Supply lines", other: "Other",
 };
 export const DTITLE: Record<string, string> = {
   all: "All events", market: "Market", policy: "Policy", disaster: "Disaster",
-  health: "Health", supply_chain: "Supply chain",
+  defence: "Defence", health: "Health", supply_chain: "Supply lines",
 };
 export const DDESC: Record<string, string> = {
   market: "Company earnings, prices, and market-structure moves.",
   policy: "Government schemes, regulation, budgets, tenders, and court rulings.",
   disaster: "Natural and physical events — floods, storms, quakes — and their aftermath.",
+  defence: "Military, security, conflict and defence-industry developments.",
   health: "Outbreaks, drugs, and health-system developments.",
-  supply_chain: "Inputs, chokepoints, shortages, and dependencies.",
+  supply_chain: "Inputs, chokepoints, shortages, and dependencies — Abu Dhabi's supply lines.",
 };
 export const URANK: Record<string, number> = { act: 0, review: 1, watch: 2 };
 
 // fixed dot/donut colours per domain (work in light and dark)
 export const DCOLOR: Record<string, string> = {
-  market: "#5B8CFF", policy: "#9D86FF", disaster: "#F0564A",
+  market: "#5B8CFF", policy: "#9D86FF", disaster: "#F0564A", defence: "#14B8A6",
   health: "#0E9F6E", supply_chain: "#F5A93D", other: "#8DA0C5",
 };
 
-export const DOMAINS = ["market", "policy", "disaster", "health", "supply_chain"];
+export const DOMAINS = ["market", "policy", "disaster", "defence", "health", "supply_chain"];
 
 export const sevWord = (s: number) => SEVWORD[s] || "Info";
 export const sevColor = (s: number) => SEV[s] || SEV[1];

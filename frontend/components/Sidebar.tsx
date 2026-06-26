@@ -7,6 +7,7 @@ import Modal from "./Modal";
 import {
   BrandLogo, DashboardIcon, AnalyticsIcon, DomainIcon, SearchIcon,
   TableIcon, TrendsIcon, RecommendIcon, ReportsIcon, MiniIcon,
+  TopicIcon, SentimentIcon,
 } from "./icons";
 
 type Item = { href: string; label: string; icon: ReactNode; tag?: string };
@@ -14,12 +15,27 @@ type Item = { href: string; label: string; icon: ReactNode; tag?: string };
 const MENU: Item[] = [
   { href: "/dashboard", label: "Overview", icon: <DashboardIcon /> },
   { href: "/analytics", label: "Analytics", icon: <AnalyticsIcon /> },
-  { href: "/view/market", label: "Market", icon: <DomainIcon d="market" /> },
-  { href: "/view/policy", label: "Policy", icon: <DomainIcon d="policy" /> },
-  { href: "/view/disaster", label: "Disaster", icon: <DomainIcon d="disaster" />, tag: "New" },
-  { href: "/view/health", label: "Health", icon: <DomainIcon d="health" /> },
-  { href: "/view/supply_chain", label: "Supply chain", icon: <DomainIcon d="supply_chain" /> },
+  { href: "/sentiment", label: "Sentiment scores", icon: <SentimentIcon />, tag: "New" },
   { href: "/search", label: "AI Search", icon: <SearchIcon /> },
+];
+
+const SECTORS: Item[] = [
+  { href: "/topic/oil-gas", label: "Oil & Gas", icon: <TopicIcon name="oil" /> },
+  { href: "/view/market", label: "Market", icon: <DomainIcon d="market" /> },
+  { href: "/topic/tourism", label: "Tourism", icon: <TopicIcon name="tourism" /> },
+  { href: "/topic/transportation", label: "Transportation", icon: <TopicIcon name="transport" /> },
+  { href: "/topic/shipping", label: "Shipping Lines", icon: <TopicIcon name="ship" /> },
+  { href: "/topic/trade", label: "Exports & Imports", icon: <TopicIcon name="trade" /> },
+  { href: "/view/supply_chain", label: "Supply lines", icon: <DomainIcon d="supply_chain" /> },
+];
+
+const SAFETY: Item[] = [
+  { href: "/view/policy", label: "Policy", icon: <DomainIcon d="policy" /> },
+  { href: "/view/defence", label: "Defence", icon: <DomainIcon d="defence" /> },
+  { href: "/view/health", label: "Health", icon: <DomainIcon d="health" /> },
+  { href: "/view/disaster", label: "Disaster", icon: <DomainIcon d="disaster" /> },
+  { href: "/topic/road-accidents", label: "Road Accidents", icon: <TopicIcon name="roadalert" /> },
+  { href: "/topic/crime", label: "Crime", icon: <TopicIcon name="crime" /> },
 ];
 
 const WORKSPACE: Item[] = [
@@ -55,6 +71,12 @@ export default function Sidebar() {
       <div className="sidescroll">
         <div className="navh">Menu</div>
         {MENU.map((m) => <NavItem key={m.href} item={m} />)}
+
+        <div className="navh">Sectors</div>
+        {SECTORS.map((m) => <NavItem key={m.href} item={m} />)}
+
+        <div className="navh">Policy &amp; safety</div>
+        {SAFETY.map((m) => <NavItem key={m.href} item={m} />)}
 
         <div className="navh">Workspace</div>
         {WORKSPACE.map((m) => <NavItem key={m.href} item={m} />)}

@@ -10,7 +10,8 @@ import { MiniIcon, TryIcon, SearchIcon } from "@/components/icons";
 
 const TYPE_DOMAIN: Record<string, string> = {
   "Market Brief": "market", "Policy Note": "policy", "Disaster Report": "disaster",
-  "Health Alert": "health", "Supply Note": "supply_chain", "General": "other",
+  "Defence Brief": "defence", "Health Alert": "health", "Supply Note": "supply_chain",
+  "General": "other",
 };
 const typeColor = (t: string) => DCOLOR[TYPE_DOMAIN[t] || "other"] || DCOLOR.other;
 const fmtDate = (ts: number) =>

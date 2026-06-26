@@ -1,21 +1,20 @@
 "use client";
 import { use, useState, type CSSProperties } from "react";
 import { useApi } from "@/app/providers";
-import { DDESC, DLABEL, SEV, SEVWORD, ULABEL, URANK, sortEvents, type SortBy } from "@/lib/ui";
+import { SEV, SEVWORD, sortEvents, type SortBy } from "@/lib/ui";
+import { TOPIC_MAP } from "@/lib/topics";
 import type { EventItem } from "@/lib/types";
 import EventCard from "@/components/EventCard";
-import { DomainIcon } from "@/components/icons";
+import { TopicIcon } from "@/components/icons";
 
-const VALID = ["market", "policy", "disaster", "defence", "health", "supply_chain"];
-
-export default function DomainPage({ params }: { params: Promise<{ domain: string }> }) {
-  const { domain } = use(params);
-  const valid = VALID.includes(domain);
-  const { data } = useApi<EventItem[]>(valid ? `/api/events?domain=${encodeURIComponent(domain)}` : null);
+export default function TopicPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
+  const topic = TOPIC_MAP[slug];
+  const { data } = useApi<EventItem[]>(topic ? `/api/topic?slug=${encodeURIComponent(slug)}` : null);
   const [sortBy, setSortBy] = useState<SortBy>("impact");
 
-  if (!valid)
-    return <div className="empty">Unknown topic. <a href="/" style={{ color: "var(--accent)" }}>Back to events</a></div>;
+  if (!topic)
+    return <div className="empty">Unknown section. <a href="/" style={{ color: "var(--accent)" }}>Back to events</a></div>;
 
   const evs = data ?? [];
   const total = evs.length;
@@ -24,31 +23,17 @@ export default function DomainPage({ params }: { params: Promise<{ domain: strin
   const moodWord = mood < -0.15 ? "negative" : mood > 0.15 ? "positive" : "mixed";
   const sev: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
   evs.forEach((e) => { if (sev[e.severity] !== undefined) sev[e.severity]++; });
-  const acts: Record<string, { label: string; urgency: string; count: number }> = {};
-  evs.forEach((e) => {
-    const a = e.action;
-    if (a && a.urgency !== "none") {
-      const g = acts[a.key] || (acts[a.key] = { label: a.label, urgency: a.urgency, count: 0 });
-      g.count++;
-    }
-  });
-  const top = Object.values(acts).sort((a, b) => URANK[a.urgency] - URANK[b.urgency] || b.count - a.count)[0];
   const sorted = sortEvents(evs, sortBy);
 
   return (
     <>
       <div className="dompage">
-        <div className="domtitle"><DomainIcon d={domain} /> {DLABEL[domain] || "Topic"}</div>
-        <div className="domdesc">{DDESC[domain] || ""}</div>
+        <div className="domtitle"><TopicIcon name={topic.icon} /> {topic.label}</div>
+        <div className="domdesc">{topic.desc}</div>
         <div className="domstats">
           <span className="bchip"><b>{total}</b> event{total !== 1 ? "s" : ""}</span>
           <span className={`bchip ${serious ? "urgent" : ""}`}><b>{serious}</b> serious</span>
           <span className="bchip"><b>{moodWord}</b> mood</span>
-          {top && (
-            <span className="bchip"><b>Top action:</b> {top.label}
-              <span className={`uchip ${top.urgency}`} style={{ marginLeft: 6 }}>{ULABEL[top.urgency]}</span>
-            </span>
-          )}
         </div>
         <div className="domsevs">
           {[5, 4, 3, 2, 1].map((s) => (
@@ -71,7 +56,7 @@ export default function DomainPage({ params }: { params: Promise<{ domain: strin
         ) : sorted.length ? (
           sorted.map((e) => <EventCard key={e.dedupe_key} e={e} />)
         ) : (
-          <div className="empty">No events in this topic right now. Click <b>Refresh now</b> to fetch more.</div>
+          <div className="empty">No {topic.label} events right now. Click <b>Refresh now</b> to fetch more.</div>
         )}
       </div>
     </>

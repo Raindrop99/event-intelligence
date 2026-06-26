@@ -12,7 +12,7 @@ const TABS = [
   ["watch", "Keep watch"], ["none", "Info"],
 ] as const;
 
-const DOMAINS = ["market", "policy", "disaster", "health", "supply_chain", "other"];
+const DOMAINS = ["market", "policy", "disaster", "defence", "health", "supply_chain", "other"];
 
 function Spark({ bars, color }: { bars: number[]; color: string }) {
   const max = Math.max(...bars, 1);

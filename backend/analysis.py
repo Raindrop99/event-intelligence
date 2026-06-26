@@ -15,12 +15,12 @@ import storage
 
 log = logging.getLogger(__name__)
 
-DOMAINS = ["market", "policy", "disaster", "health", "supply_chain", "other"]
+DOMAINS = ["market", "policy", "disaster", "defence", "health", "supply_chain", "other"]
 
 # Bump this whenever the SYSTEM_PROMPT wording changes. Events analysed under an
 # older version are re-analysed automatically the next time they're opened, so the
 # latest prompt style is already in place — no manual re-analyse needed.
-PROMPT_VERSION = "2026-06-19-v7-officialbrief"
+PROMPT_VERSION = "2026-06-24-v8-govimpact"
 
 
 # ---------------------------------------------------------------------------
@@ -133,9 +133,10 @@ If it's not instantly clear → rewrite.
 
 * market → company, stock, earnings, markets
 * policy → government rules, schemes, court decisions
-* disaster → floods, fires, earthquakes
+* disaster → natural / physical events — floods, fires, earthquakes, accidents
+* defence → military, security, war, conflict, weapons, troops, defence deals, alliances
 * health → diseases, drugs, hospitals
-* supply_chain → shortages, logistics, inputs
+* supply_chain → shortages, logistics, inputs (supply lines)
 * other → none fit
 
 Pick based on MAIN ACTOR + MAIN CAUSE.
@@ -212,6 +213,24 @@ Examples:
 
 * "Energy exports fund a large share of the national budget."
 * "Abu Dhabi's ports and airlines depend on open, stable trade routes."
+
+---
+
+## government_impact — how it's impactful to the ABU DHABI GOVERNMENT (not just the economy)
+
+2–3 plain sentences on what this means for the GOVERNMENT itself — beyond the sector economics. Cover the ones that apply:
+
+* the budget / revenue and how much fiscal room the government has to spend
+* its policy and development goals (diversification, national strategy, jobs, food / energy / water security)
+* public confidence and the leadership's standing with citizens
+* Abu Dhabi's position and influence in the Gulf and the world
+
+Then say the concrete UPSIDE the government gains by acting on it.
+
+Example:
+"Lower oil prices shrink the revenue that funds the national budget, tightening the room for public spending and flagship programmes. By hedging and accelerating diversification now, the leadership protects services, shows economic command, and reinforces public confidence in Abu Dhabi's long-term plan."
+
+If the item has no Abu Dhabi relevance → ""
 
 ---
 
@@ -401,6 +420,7 @@ If the item has no real Abu Dhabi relevance:
 * urgency = "none"
 * action_plan = []
 * why_it_matters = ""
+* government_impact = ""
 * impact_summary = "No meaningful impact on Abu Dhabi"
 
 ---
@@ -419,6 +439,7 @@ Each object:
 "ai_summary": "...",
 "impact_summary": "...",
 "why_it_matters": "...",
+"government_impact": "...",
 "channels": [],
 "winners": [],
 "losers": [],
@@ -440,10 +461,10 @@ No markdown. No extra text.
 ## EXAMPLES (copy this tone and this exact JSON shape)
 
 Item: "Oil prices slide below $70 as global demand weakens"
-Output: [{"id": 0, "domain": "market", "severity": 5, "sentiment": -0.6, "ai_summary": "Oil prices have fallen below $70 a barrel as signs of weaker global demand spread. Producers are weighing how to respond, and lower prices squeeze the revenue of oil-exporting economies.", "impact_summary": "Oil falls below $70 → Abu Dhabi oil revenue hit → budget pressure rises", "why_it_matters": "Energy exports fund a large share of the national budget.", "channels": ["cost", "confidence", "currency_trade"], "winners": [{"group": "Etihad & logistics", "why": "lower fuel costs ease their expenses"}], "losers": [{"group": "ADNOC & energy exporters", "why": "each barrel earns less, cutting revenue"}, {"group": "National budget & sovereign funds", "why": "oil income funds spending and investment"}], "second_order": "Oil prices stay low, so Abu Dhabi's oil revenue and budget come under pressure.", "urgency": "act", "action_label": "Protect Revenue", "next_action": "Oil revenue is falling, so accelerate economic diversification and draw on sovereign-fund buffers to steady the budget.", "action_plan": [{"action": "Hedge part of oil revenue and lock forward sales", "priority": "immediate", "outcome": "More predictable energy income for the budget"}, {"action": "Speed up non-oil diversification incentives in tourism, industry and finance", "priority": "high", "outcome": "Less reliance on oil over time"}, {"action": "Use sovereign-fund returns to smooth near-term spending", "priority": "medium", "outcome": "Public programmes stay funded through the dip"}], "economic_impact": {"score": 85, "level": "high", "sectors": [{"sector": "Energy & oil exports", "impact": "high", "probability": 95, "reason": "the core revenue source falls with prices"}, {"sector": "National budget & sovereign funds", "impact": "high", "probability": 80, "reason": "oil income funds spending and investment"}, {"sector": "Tourism & aviation", "impact": "medium", "probability": 55, "reason": "lower fuel costs partly offset the hit"}], "summary": "Lower oil prices directly cut Abu Dhabi's main revenue source and pressure the budget, while easing fuel costs for transport."}, "economic_impact_after": {"score": 55, "level": "medium", "sectors": [{"sector": "Energy & oil exports", "impact": "high", "probability": 75, "reason": "hedging cushions part of the fall"}, {"sector": "National budget & sovereign funds", "impact": "medium", "probability": 55, "reason": "sovereign buffers smooth spending"}, {"sector": "Tourism & aviation", "impact": "low", "probability": 40, "reason": "diversification incentives lift non-oil activity"}], "summary": "Hedging, sovereign buffers and faster diversification cushion the budget, though structural oil dependence remains the core risk."}, "official_brief": {"bottom_line": "Falling oil prices threaten Abu Dhabi's main revenue source — move faster on buffers and diversification.", "stakes": "Energy income funds a large share of the budget; a sustained drop pressures spending and investment.", "move": "Convene energy and finance leaders to hedge oil revenue and release a diversification acceleration package.", "owner": "Department of Energy with the Department of Economic Development and the sovereign funds", "timeframe": "now", "payoff": "A steadier budget, faster non-oil growth, and a visible lead on economic resilience.", "risk_if_ignored": "Budget pressure forces deeper cuts later and dents confidence in the recovery plan.", "options": ["Hedge a share of oil revenue", "Fast-track tourism and industry incentives", "Deploy sovereign-fund returns to smooth spending"], "talking_point": "Abu Dhabi is turning an oil-price dip into an accelerator for a diversified, future-proof economy."}, "confidence": 0.8}]
+Output: [{"id": 0, "domain": "market", "severity": 5, "sentiment": -0.6, "ai_summary": "Oil prices have fallen below $70 a barrel as signs of weaker global demand spread. Producers are weighing how to respond, and lower prices squeeze the revenue of oil-exporting economies.", "impact_summary": "Oil falls below $70 → Abu Dhabi oil revenue hit → budget pressure rises", "why_it_matters": "Energy exports fund a large share of the national budget.", "government_impact": "Lower oil prices shrink the revenue that funds the national budget, tightening the government's room to spend on public services and flagship programmes. By hedging revenue and accelerating diversification now, the leadership protects spending, shows economic command, and reinforces public confidence in Abu Dhabi's long-term plan.", "channels": ["cost", "confidence", "currency_trade"], "winners": [{"group": "Etihad & logistics", "why": "lower fuel costs ease their expenses"}], "losers": [{"group": "ADNOC & energy exporters", "why": "each barrel earns less, cutting revenue"}, {"group": "National budget & sovereign funds", "why": "oil income funds spending and investment"}], "second_order": "Oil prices stay low, so Abu Dhabi's oil revenue and budget come under pressure.", "urgency": "act", "action_label": "Protect Revenue", "next_action": "Oil revenue is falling, so accelerate economic diversification and draw on sovereign-fund buffers to steady the budget.", "action_plan": [{"action": "Hedge part of oil revenue and lock forward sales", "priority": "immediate", "outcome": "More predictable energy income for the budget"}, {"action": "Speed up non-oil diversification incentives in tourism, industry and finance", "priority": "high", "outcome": "Less reliance on oil over time"}, {"action": "Use sovereign-fund returns to smooth near-term spending", "priority": "medium", "outcome": "Public programmes stay funded through the dip"}], "economic_impact": {"score": 85, "level": "high", "sectors": [{"sector": "Energy & oil exports", "impact": "high", "probability": 95, "reason": "the core revenue source falls with prices"}, {"sector": "National budget & sovereign funds", "impact": "high", "probability": 80, "reason": "oil income funds spending and investment"}, {"sector": "Tourism & aviation", "impact": "medium", "probability": 55, "reason": "lower fuel costs partly offset the hit"}], "summary": "Lower oil prices directly cut Abu Dhabi's main revenue source and pressure the budget, while easing fuel costs for transport."}, "economic_impact_after": {"score": 55, "level": "medium", "sectors": [{"sector": "Energy & oil exports", "impact": "high", "probability": 75, "reason": "hedging cushions part of the fall"}, {"sector": "National budget & sovereign funds", "impact": "medium", "probability": 55, "reason": "sovereign buffers smooth spending"}, {"sector": "Tourism & aviation", "impact": "low", "probability": 40, "reason": "diversification incentives lift non-oil activity"}], "summary": "Hedging, sovereign buffers and faster diversification cushion the budget, though structural oil dependence remains the core risk."}, "official_brief": {"bottom_line": "Falling oil prices threaten Abu Dhabi's main revenue source — move faster on buffers and diversification.", "stakes": "Energy income funds a large share of the budget; a sustained drop pressures spending and investment.", "move": "Convene energy and finance leaders to hedge oil revenue and release a diversification acceleration package.", "owner": "Department of Energy with the Department of Economic Development and the sovereign funds", "timeframe": "now", "payoff": "A steadier budget, faster non-oil growth, and a visible lead on economic resilience.", "risk_if_ignored": "Budget pressure forces deeper cuts later and dents confidence in the recovery plan.", "options": ["Hedge a share of oil revenue", "Fast-track tourism and industry incentives", "Deploy sovereign-fund returns to smooth spending"], "talking_point": "Abu Dhabi is turning an oil-price dip into an accelerator for a diversified, future-proof economy."}, "confidence": 0.8}]
 
 Item: "Local football club wins regional youth tournament"
-Output: [{"id": 0, "domain": "other", "severity": 1, "sentiment": 0.0, "ai_summary": "A local football club won a regional youth tournament. It is a community sports story with no economic angle.", "impact_summary": "No meaningful impact on Abu Dhabi", "why_it_matters": "", "channels": [], "winners": [], "losers": [], "second_order": "", "urgency": "none", "action_label": "", "next_action": "", "action_plan": [], "economic_impact": {"score": 0, "level": "low", "sectors": [], "summary": "No economic impact on Abu Dhabi — a local sports story."}, "economic_impact_after": {"score": 0, "level": "low", "sectors": [], "summary": "No action needed — nothing changes."}, "official_brief": {}, "confidence": 0.9}]
+Output: [{"id": 0, "domain": "other", "severity": 1, "sentiment": 0.0, "ai_summary": "A local football club won a regional youth tournament. It is a community sports story with no economic angle.", "impact_summary": "No meaningful impact on Abu Dhabi", "why_it_matters": "", "government_impact": "", "channels": [], "winners": [], "losers": [], "second_order": "", "urgency": "none", "action_label": "", "next_action": "", "action_plan": [], "economic_impact": {"score": 0, "level": "low", "sectors": [], "summary": "No economic impact on Abu Dhabi — a local sports story."}, "economic_impact_after": {"score": 0, "level": "low", "sectors": [], "summary": "No action needed — nothing changes."}, "official_brief": {}, "confidence": 0.9}]
 
 ---
 
@@ -611,15 +632,20 @@ def _assemble(arr, items: list[dict]) -> list[dict | None]:
         if match:
             match["mode"] = "llm"
             match["prompt_version"] = PROMPT_VERSION
-            match["ai_summary"] = (match.get("ai_summary") or "").strip()
-            match["why_it_matters"] = (match.get("why_it_matters") or "").strip()
             match["winners"], match["winner_reasons"] = _split_ledger(match.get("winners"))
             match["losers"], match["loser_reasons"] = _split_ledger(match.get("losers"))
             match["action_plan"] = _clean_plan(match.get("action_plan"))
             match["economic_impact"] = _clean_econ(match.get("economic_impact"))
             match["economic_impact_after"] = _reconcile_after(
                 _clean_econ(match.get("economic_impact_after")), match["economic_impact"])
-            match["official_brief"] = _clean_brief(match.get("official_brief"))
+            # Every event keeps the full output — summary, why-it-matters, government
+            # impact and an Official Action Brief — falling back to the deterministic
+            # versions when the agent left a field empty (e.g. lower-relevance news), so
+            # the detail page looks the same for EVERY story.
+            match["ai_summary"] = (match.get("ai_summary") or "").strip() or fallback_summary(match)
+            match["why_it_matters"] = (match.get("why_it_matters") or "").strip() or fallback_why(match)
+            match["government_impact"] = (match.get("government_impact") or "").strip() or fallback_govt(match)
+            match["official_brief"] = _clean_brief(match.get("official_brief")) or _fallback_brief(match)
         out.append(match)
     return out
 
@@ -829,15 +855,17 @@ def search_events(query: str, events: list[dict]) -> dict:
 # ---------------------------------------------------------------------------
 
 _ENRICH_SYSTEM = """You assess a single news / economic event for ABU DHABI ECONOMIC INTELLIGENCE, used by Abu Dhabi government officials. Judge everything through the lens of Abu Dhabi and its economy. Use ONLY what the event says — never invent facts, numbers, companies, or dates.
-Return ONLY JSON with exactly these six keys:
+Return ONLY JSON with exactly these seven keys:
 {"ai_summary": "<a neutral 2–3 sentence plain recap of WHAT THE ARTICLE REPORTS — who/what/where + key facts; no analysis>",
  "why_it_matters": "<ONE plain sentence on why this matters to ABU DHABI / the nation — e.g. 'Energy exports fund a large share of the national budget'>",
+ "government_impact": "<2–3 sentences on how this is impactful to the ABU DHABI GOVERNMENT itself — its budget/revenue & fiscal room, its policy & development goals, public confidence & the leadership's standing, and the nation's regional position — then the concrete upside the government gains by acting. '' if no Abu Dhabi relevance>",
  "action_plan": [{"action": "<a concrete GOVERNMENT / authority step — never an individual's action, never 'monitor'>", "priority": "immediate|high|medium|low", "outcome": "<what concretely improves for Abu Dhabi>"}],
  "economic_impact": {"score": <0-100>, "level": "low|medium|high", "sectors": [{"sector": "<Abu Dhabi / UAE sector>", "impact": "low|medium|high", "probability": <0-100>, "reason": "<short why, under 14 words>"}], "summary": "<1-2 sentence read for Abu Dhabi>"},
  "economic_impact_after": {"score": <0-100>, "level": "low|medium|high", "sectors": [{"sector": "<the SAME sector, same order>", "impact": "low|medium|high", "probability": <0-100>, "reason": "<short why the residual impact stays at this level after acting>"}], "summary": "<1-2 sentence projected read for Abu Dhabi once the action_plan is followed>"},
  "official_brief": {"bottom_line": "<one sharp takeaway for Abu Dhabi>", "stakes": "<what AD gains or loses, specific>", "move": "<the ONE immediate action>", "owner": "<which Abu Dhabi authority leads>", "timeframe": "now|this week|this month", "payoff": "<the SPECIFIC gain from this action — name the sector/outcome, never generic boilerplate>", "risk_if_ignored": "<cost of inaction, specific>", "options": ["<2-3 policy options>"], "talking_point": "<one public line the official can lead with>"}}
 - ai_summary: a factual recap of the article itself (the news), distinct from the Abu Dhabi read. For items with no Abu Dhabi relevance, one line saying what it is.
 - why_it_matters: one short "so what" line for Abu Dhabi / the nation. "" only when there is no Abu Dhabi relevance.
+- government_impact: how it matters to the GOVERNMENT as an institution (fiscal room, policy/development goals, public confidence, regional standing) plus the upside of acting — distinct from the sector economics. "" only when there is no Abu Dhabi relevance.
 - action_plan: 2–4 government / authority steps to protect Abu Dhabi's downside or capture its upside, most urgent first. [] if there is nothing for the government to do.
 - economic_impact = impact on ABU DHABI now. score: 0 = none, 100 = nation-level. level: low<40, medium 40–69, high>=70. 2–4 Abu Dhabi / UAE sectors, most affected first. For news with no Abu Dhabi relevance: score 0–10, level "low", sectors [].
 - economic_impact_after = the SAME sectors PROJECTED once the action_plan is followed. LOWER each sector's impact/probability and the overall score to reflect the mitigation (score MUST be <= the economic_impact score; never raise anything above the before-state). Each reason explains the RESIDUAL risk after acting. If action_plan is [], economic_impact_after equals economic_impact.
@@ -881,7 +909,8 @@ _WHY_BY_DOMAIN = {
     "market": "This could move markets and prices that touch Abu Dhabi's revenue and investments.",
     "policy": "Policy shifts abroad can change Abu Dhabi's trade, investment and competitive position.",
     "disaster": "Disruptions here can hit Abu Dhabi's trade routes, supply and regional stability.",
-    "health": "Health shocks can affect Abu Dhabi's people, tourism and healthcare costs.",
+    "defence": "Security and conflict can threaten Abu Dhabi's trade routes, energy exports and regional stability.",
+    "health": "Health shocks can affect Abu Dhabi's people, tourism and health costs.",
     "supply_chain": "This could raise input costs or strain Abu Dhabi's ports, trade and industry.",
     "other": "This may have a small, indirect effect on Abu Dhabi's economy.",
 }
@@ -889,11 +918,34 @@ _WHY_BY_DOMAIN = {
 
 def fallback_why(e: dict) -> str:
     """A plain 'so what for Abu Dhabi' line for when the agent can't run. Transient —
-    the agent replaces it with a story-specific line on a later view. Empty for
-    low-severity or non-Abu-Dhabi news (so we don't force a reason that isn't there)."""
-    if int(e.get("severity") or 1) < 2 or not _ad_relevant(e):
-        return ""
-    return _WHY_BY_DOMAIN.get(e.get("domain", "other"), _WHY_BY_DOMAIN["other"])
+    the agent replaces it with a story-specific line on a later view. Always returns an
+    insight (even for low-certainty / non-Abu-Dhabi news), but stays honest — no
+    fabricated Abu Dhabi impact, just an indirect 'worth watching' read."""
+    if _ad_relevant(e):
+        return _WHY_BY_DOMAIN.get(e.get("domain", "other"), _WHY_BY_DOMAIN["other"])
+    return "Mostly a global signal with limited direct effect on Abu Dhabi today — worth tracking as it develops."
+
+
+_GOVT_BY_DOMAIN = {
+    "market": "This touches the revenue and investment returns that fund the national budget and flagship programmes. Acting early protects the government's fiscal room and public confidence in the economic plan.",
+    "policy": "This can reshape the rules Abu Dhabi competes under. Moving first lets the leadership defend the nation's trade and investment position and show it is ahead of the curve.",
+    "disaster": "Disruptions like this can strain the trade and supply the economy runs on. A quick, visible government response protects continuity and reassures the public.",
+    "defence": "Security developments can threaten the trade routes, energy exports and stability the economy depends on. A calm, coordinated government response protects assets and reinforces Abu Dhabi's standing as a stable hub.",
+    "health": "Health shocks raise costs and test public services. Decisive action safeguards citizens, tourism revenue and the leadership's standing.",
+    "supply_chain": "Strain here raises input costs and slows the ports and industry the economy depends on. Securing supply protects jobs, prices and the development agenda.",
+    "other": "This has a limited, indirect bearing on the government's fiscal room and priorities. Acting where it is relevant keeps the economy on plan.",
+}
+
+
+def fallback_govt(e: dict) -> str:
+    """A plain 'what this means for the Abu Dhabi government' line for when the agent
+    can't run. Transient — the agent replaces it with a story-specific paragraph on a
+    later view. Always returns an insight (even low-certainty / non-Abu-Dhabi news),
+    but stays honest — an indirect 'worth monitoring' read, not a fabricated impact."""
+    if _ad_relevant(e):
+        return _GOVT_BY_DOMAIN.get(e.get("domain", "other"), _GOVT_BY_DOMAIN["other"])
+    return ("Little direct call on the government today, but worth monitoring — if it "
+            "escalates it could touch Abu Dhabi's trade, investment or regional position.")
 
 
 # ---------------------------------------------------------------------------
@@ -915,8 +967,11 @@ _DOMAIN_KEYWORDS = {
                "tariff", " tax ", "parliament", "council", "treaty", "diplomat",
                "election", "summit", "agreement", "legislation", "ruling", " ban "),
     "disaster": ("earthquake", "flood", "storm", "hurricane", "cyclone", "wildfire",
-                 "explosion", "attack", " war ", "conflict", "missile", "airstrike",
-                 "drone", "crash", "oil spill", "collapse", "evacuat", "casualt", "killed"),
+                 "explosion", "crash", "oil spill", "collapse", "evacuat", "casualt", "killed"),
+    "defence": ("defence", "defense", "military", "army", "navy", "air force", "troops",
+                "soldier", "weapon", "arms deal", "missile", "airstrike", "drone", " war ",
+                "warfare", "conflict", "attack", "nato", "warship", "fighter jet",
+                "ceasefire", "armed forces", "militant", "artillery", "security forces"),
     "health": ("virus", "outbreak", "pandemic", "covid", "disease", "vaccine",
                "hospital", "health", "infection", "epidemic", " flu ", "cholera"),
     "supply_chain": ("supply chain", "shipping", " port ", "freight", "logistics",
@@ -1012,6 +1067,7 @@ def _agent_enrich(e: dict) -> dict:
     after = _reconcile_after(_clean_econ(obj.get("economic_impact_after")), before)
     return {"ai_summary": (obj.get("ai_summary") or "").strip(),
             "why_it_matters": (obj.get("why_it_matters") or "").strip(),
+            "government_impact": (obj.get("government_impact") or "").strip(),
             "action_plan": _clean_plan(obj.get("action_plan")),
             "economic_impact": before, "economic_impact_after": after,
             "official_brief": _clean_brief(obj.get("official_brief"))}
@@ -1020,6 +1076,8 @@ def _agent_enrich(e: dict) -> dict:
 _DOMAIN_PLAN = {
     "disaster": ("Protect Abu Dhabi's exposed trade routes and supply lines and ready contingency support.",
                  "Trade and essential supply keep moving for Abu Dhabi."),
+    "defence": ("Assess the security exposure to Abu Dhabi's trade routes, energy and assets, and coordinate a measured response.",
+                "Abu Dhabi's assets, trade and people stay protected."),
     "health": ("Apply health-security measures to safeguard Abu Dhabi's people, tourism and essential supply.",
                "Exposure and economic disruption are limited."),
     "policy": ("Assess how this policy shift affects Abu Dhabi's trade and investment, then adjust strategy.",
@@ -1037,13 +1095,14 @@ def _fallback_plan(e: dict) -> list[dict]:
     """A quick, event-flavoured plan for when the agent can't run — transient,
     so the agent upgrades it on a later view."""
     sev = int(e.get("severity") or 1)
-    if sev < 2 or not _ad_relevant(e):
+    if not _ad_relevant(e):
         return []
     losers = [l for l in (e.get("losers") or []) if l][:2]
     winners = [w for w in (e.get("winners") or []) if w][:1]
     who = " and ".join(losers) if losers else "anyone exposed"
     a, o = _DOMAIN_PLAN.get(e.get("domain", "other"), _DOMAIN_PLAN["other"])
-    plan = [{"action": a.format(who=who), "priority": "immediate" if sev >= 4 else "high", "outcome": o}]
+    prio = "immediate" if sev >= 4 else "high" if sev >= 3 else "medium"
+    plan = [{"action": a.format(who=who), "priority": prio, "outcome": o}]
     if losers:
         plan.append({"action": f"Support {who} with targeted measures — incentives, contracts, or relief.",
                      "priority": "high" if sev >= 4 else "medium",
@@ -1057,34 +1116,38 @@ def _fallback_plan(e: dict) -> list[dict]:
 # the broad Abu Dhabi sector each domain hits first, for the deterministic econ fallback
 _DOMAIN_SECTOR = {
     "market": "Energy & financial markets", "policy": "Trade & government policy",
-    "disaster": "Trade routes & supply", "health": "Healthcare & tourism",
-    "supply_chain": "Ports, trade & industry", "other": "Abu Dhabi economy",
+    "disaster": "Trade routes & supply", "health": "Health & tourism",
+    "supply_chain": "Ports, trade & industry", "defence": "Defence & national security",
+    "other": "Abu Dhabi economy",
 }
 
 
 def _fallback_econ(e: dict) -> dict:
-    """A quick economic read for when the agent can't run — transient, so the
-    agent upgrades it on a later view. Derived from severity, domain and losers."""
+    """A quick economic read for when the agent can't run — transient, so the agent
+    upgrades it on a later view. Always returns an engaging read (even low-certainty
+    news), but never fabricates Abu Dhabi sectors for clearly-unrelated news."""
     sev = int(e.get("severity") or 1)
-    if sev < 2:
-        return {"score": min(10, sev * 5), "level": "low", "sectors": [],
-                "summary": "Minimal economic impact — routine or low-signal news."}
     if not _ad_relevant(e):
-        # Don't invent an Abu Dhabi impact for unrelated global news — the agent
-        # scores these 0–10 with no sectors, so the fallback should too.
-        return {"score": min(10, sev * 3), "level": "low", "sectors": [],
-                "summary": "No direct Abu Dhabi economic relevance — global / other news."}
+        # Honest, but still an insight — no invented Abu Dhabi sectors.
+        return {"score": min(18, 8 + sev * 2), "level": "low", "sectors": [],
+                "summary": "A global development with limited direct impact on Abu Dhabi "
+                           "today — worth watching as a signal that could matter later."}
     conf = float(e.get("confidence") or 0.3)
-    score = max(20, min(95, int(sev * 18 + conf * 10)))
-    imp = "high" if sev >= 4 else "medium"
-    sectors = [{"sector": _DOMAIN_SECTOR.get(e.get("domain", "other"), "General economy"),
-                "impact": imp, "probability": 70,
-                "reason": "the event's primary economic channel"}]
+    # low-severity Abu Dhabi news now shows a low-but-real impact instead of nothing
+    score = max(18, min(95, int(sev * 17 + conf * 12)))
+    imp = "high" if sev >= 4 else "medium" if sev >= 3 else "low"
+    prob = 70 if sev >= 3 else 50
+    early = sev < 3
+    sectors = [{"sector": _DOMAIN_SECTOR.get(e.get("domain", "other"), "Abu Dhabi economy"),
+                "impact": imp, "probability": prob,
+                "reason": "an early, indirect signal worth watching" if early
+                          else "the event's primary economic channel"}]
     for l in [x for x in (e.get("losers") or []) if x][:2]:
-        sectors.append({"sector": l, "impact": imp, "probability": 65,
+        sectors.append({"sector": l, "impact": imp, "probability": 65 if not early else 45,
                         "reason": "named among those most exposed"})
-    summary = (e.get("impact_summary") or "").strip() or \
-        "Moderate economic impact across the affected sectors."
+    summary = (e.get("impact_summary") or "").strip() or (
+        "An early read for Abu Dhabi — limited for now, but worth tracking." if early
+        else "Moderate economic impact across the affected sectors.")
     return {"score": score, "level": _band(score), "sectors": sectors[:4], "summary": summary}
 
 
@@ -1121,43 +1184,77 @@ _DOMAIN_OWNER = {
     "disaster": "Crisis & emergency management authorities",
     "health": "Department of Health",
     "supply_chain": "AD Ports & trade authorities",
+    "defence": "UAE Armed Forces & Tawazun Council",
     "other": "Department of Economic Development",
 }
 
 
 def _fallback_brief(e: dict) -> dict:
-    """A decision-ready brief built from existing fields, for when the agent can't run."""
+    """A decision-ready brief built from existing fields, for when the agent can't run.
+    Always returns a COMPLETE brief so every event shows the Official Action Brief —
+    deriving the move from the agent's next_action, else the fallback plan, else a
+    domain default. Abu-Dhabi-relevant items get an action brief; unrelated global news
+    gets an honest 'monitor for spillover' brief (never a fabricated urgent action)."""
     sev = int(e.get("severity") or 1)
-    move = (e.get("next_action") or "").strip()
-    if sev < 2 or not move or not _ad_relevant(e):
-        return {}
+    relevant = _ad_relevant(e)
+    plan = _fallback_plan(e)
+    domain = e.get("domain", "other")
+    sector = _DOMAIN_SECTOR.get(domain, "the wider economy")
     losers = [l for l in (e.get("losers") or []) if l][:1]
     winners = [w for w in (e.get("winners") or []) if w][:1]
-    sector = _DOMAIN_SECTOR.get(e.get("domain", "other"), "the wider economy")
-    payoff = (f"{winners[0]} gains and Abu Dhabi captures the upside early."
-              if winners else f"{sector} stays resilient and the downside is contained.")
+
+    # the move: agent's own next step → top fallback-plan action → a domain default
+    move = (e.get("next_action") or "").strip()
+    if not move:
+        if plan:
+            move = plan[0]["action"]
+        elif relevant:
+            a, _o = _DOMAIN_PLAN.get(domain, _DOMAIN_PLAN["other"])
+            who = " and ".join(losers) or "the exposed sectors"
+            move = a.format(who=who)
+        else:
+            move = "Track this story and act if it starts to touch Abu Dhabi's trade, energy or investment."
+
+    bottom = (e.get("impact_summary") or "").strip() or (e.get("title") or "").strip()
+    stakes = (e.get("why_it_matters") or "").strip() or (
+        f"How this affects {sector} and Abu Dhabi's wider economy." if relevant
+        else "Limited direct exposure for Abu Dhabi today — but worth watching for spillover.")
+    payoff = (f"{winners[0]} gains and Abu Dhabi captures the upside early." if winners
+              else f"{sector} stays resilient and the downside is contained." if relevant
+              else "Abu Dhabi stays ahead of any spillover before it becomes a cost.")
+    risk = (f"Abu Dhabi's {losers[0]} stays exposed and the cost grows." if losers
+            else "The economic downside widens if left unaddressed." if relevant
+            else "A manageable risk could grow into a real cost if it escalates unnoticed.")
+    options = [s["action"] for s in plan[:3]] or (
+        ["Assess Abu Dhabi's exposure", "Ready a targeted response", "Brief the relevant authority"]
+        if relevant else ["Keep monitoring", "Re-assess if it escalates"])
+
     return {
-        "bottom_line": (e.get("impact_summary") or "").strip(),
-        "stakes": (e.get("why_it_matters") or "").strip(),
+        "bottom_line": bottom,
+        "stakes": stakes,
         "move": move,
-        "owner": _DOMAIN_OWNER.get(e.get("domain", "other"), _DOMAIN_OWNER["other"]),
-        "timeframe": "now" if sev >= 4 else "this week",
+        "owner": _DOMAIN_OWNER.get(domain, _DOMAIN_OWNER["other"]),
+        "timeframe": "now" if sev >= 4 else "this week" if sev >= 2 else "this month",
         "payoff": payoff,
-        "risk_if_ignored": (f"Abu Dhabi's {losers[0]} stays exposed and the cost grows."
-                            if losers else "The economic downside widens if left unaddressed."),
-        "options": [], "talking_point": "",
+        "risk_if_ignored": risk,
+        "options": options,
+        "talking_point": "",
     }
 
 
 def ensure_enrichment(e: dict) -> dict:
-    """Return {"ai_summary", "why_it_matters", "action_plan", "economic_impact",
-    "economic_impact_after", "official_brief", "cacheable"}. One agent call fills them
-    all (cacheable=True); if the agent can't run, deterministic fallbacks fill the gaps
-    (cacheable=False) so the agent can upgrade them on a later view."""
+    """Return {"ai_summary", "why_it_matters", "government_impact", "action_plan",
+    "economic_impact", "economic_impact_after", "official_brief", "cacheable"}. One agent
+    call fills them all (cacheable=True); if the agent can't run, deterministic fallbacks
+    fill the gaps (cacheable=False) so the agent can upgrade them on a later view."""
+    # Always run the full LLM analysis — it self-limits to the daily request budget.
+    # The deterministic insights below only fill in when the agent genuinely can't run
+    # (no key, or the budget is spent), so the output matches the full AI read again.
     out = _agent_enrich(e)
     if out and (out.get("action_plan") or out.get("economic_impact") or out.get("ai_summary")):
         return {"ai_summary": out.get("ai_summary") or fallback_summary(e),
                 "why_it_matters": out.get("why_it_matters") or fallback_why(e),
+                "government_impact": out.get("government_impact") or fallback_govt(e),
                 "action_plan": out.get("action_plan") or [],
                 "economic_impact": out.get("economic_impact") or {},
                 "economic_impact_after": out.get("economic_impact_after") or {},
@@ -1166,6 +1263,7 @@ def ensure_enrichment(e: dict) -> dict:
     before = _fallback_econ(e)
     plan = _fallback_plan(e)
     return {"ai_summary": fallback_summary(e), "why_it_matters": fallback_why(e),
+            "government_impact": fallback_govt(e),
             "action_plan": plan, "economic_impact": before,
             "economic_impact_after": _fallback_econ_after(before, bool(plan)),
             "official_brief": _fallback_brief(e), "cacheable": False}

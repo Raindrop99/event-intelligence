@@ -11,9 +11,42 @@ from datetime import datetime, timezone
 import analysis
 import storage
 
-DOMAINS = ["market", "policy", "disaster", "health", "supply_chain", "other"]
+DOMAINS = ["market", "policy", "disaster", "defence", "health", "supply_chain", "other"]
 DLABEL = {"market": "Market", "policy": "Policy", "disaster": "Disaster",
-          "health": "Health", "supply_chain": "Supply chain", "other": "Other"}
+          "defence": "Defence", "health": "Health", "supply_chain": "Supply lines",
+          "other": "Other"}
+
+# Topic filters — keyword views over the analysed events, surfaced as sidebar
+# sections. Unlike the single 'domain' each event has, an event can appear under
+# any topic whose keywords it matches (so Oil & Gas, Tourism, Trade etc. all work
+# off the same analysed feed without a rigid taxonomy).
+TOPICS = {
+    "oil-gas": {"label": "Oil & Gas", "keywords": [
+        "oil", "gas", "crude", "brent", "wti", "opec", "adnoc", "lng", "barrel",
+        "petroleum", "refinery", "gasoline", "petrochemical", "shale", "energy export"]},
+    "transportation": {"label": "Transportation", "keywords": [
+        "transport", "aviation", "airline", "etihad", "airport", "flight", "rail",
+        "metro", "highway", "road", "vehicle", "mobility", "logistics", "electric vehicle"]},
+    "tourism": {"label": "Tourism", "keywords": [
+        "tourism", "tourist", "hotel", "hospitality", "visitor", "travel", "resort",
+        "leisure", "museum", "louvre", "attraction", "cruise", "occupancy"]},
+    "exports": {"label": "Exports", "keywords": [
+        "export", "exporter", "re-export", "outbound", "non-oil export", "exported"]},
+    "imports": {"label": "Imports", "keywords": [
+        "import", "importer", "inbound", "customs", "imported", "import bill"]},
+    "trade": {"label": "Exports & Imports", "keywords": [
+        "export", "import", "trade", "tariff", "customs", "re-export", "wto",
+        "trade deal", "trade balance", "free trade", "non-oil trade"]},
+    "shipping": {"label": "Shipping Lines", "keywords": [
+        "shipping", "vessel", "container", "cargo", "maritime", "freight", "port",
+        "strait", "canal", "ad ports", "tanker", "fleet", "shipment"]},
+    "road-accidents": {"label": "Road Accidents", "keywords": [
+        "road accident", "car crash", "collision", "traffic accident", "road safety",
+        "fatal crash", "pile-up", "vehicle crash", "road death", "highway crash"]},
+    "crime": {"label": "Crime", "keywords": [
+        "crime", "fraud", "theft", "robbery", "smuggling", "money laundering", "arrest",
+        "police", "scam", "cybercrime", "embezzle", "trafficking", "bribery"]},
+}
 
 _STOP = set((
     "the a an and or of to in on for with at by from as is are was were be been being "
@@ -303,7 +336,8 @@ def analytics() -> dict:
 # ---------------------------------------------------------------------------
 
 _TYPE = {"market": "Market Brief", "policy": "Policy Note", "disaster": "Disaster Report",
-         "health": "Health Alert", "supply_chain": "Supply Note", "other": "General"}
+         "defence": "Defence Brief", "health": "Health Alert", "supply_chain": "Supply Note",
+         "other": "General"}
 
 
 def reports(limit: int = 120) -> dict:
@@ -538,3 +572,64 @@ def dashboard() -> dict:
         "domains": domains,
         "channels": channels,
     }
+
+
+# ---------------------------------------------------------------------------
+# Topic filters & sentiment — power the extra sidebar sections
+# ---------------------------------------------------------------------------
+
+def topic_events(slug: str, limit: int = 80):
+    """Recent analysed events that match a topic's keywords (title / summary /
+    content). Returns None for an unknown slug so the API can 404."""
+    t = TOPICS.get(slug)
+    if t is None:
+        return None
+    kws = t["keywords"]
+    out = []
+    for e in storage.recent_events(limit=500):
+        text = (f"{e.get('title', '')} {e.get('content', '')} {e.get('ai_summary', '')} "
+                f"{e.get('impact_summary', '')}").lower()
+        if any(k in text for k in kws):
+            out.append(e)
+            if len(out) >= limit:
+                break
+    return out
+
+
+def sentiment_overview(limit: int = 250) -> dict:
+    """Sentiment scores across the recent analysed events — overall tone, the
+    positive/neutral/negative split, the average by topic area, and the most positive
+    and most negative stories. All from each event's own sentiment (-1..1)."""
+    evs = [e for e in storage.recent_events(limit=limit) if e.get("analyzed_at")]
+    n = len(evs)
+    if not n:
+        return {"count": 0, "avg": 0, "positive": 0, "neutral": 0, "negative": 0,
+                "by_domain": [], "top_positive": [], "top_negative": []}
+
+    def s(e):
+        return float(e.get("sentiment") or 0.0)
+
+    avg = sum(s(e) for e in evs) / n
+    pos = [e for e in evs if s(e) > 0.15]
+    neg = [e for e in evs if s(e) < -0.15]
+    neu = n - len(pos) - len(neg)
+
+    bucket: dict[str, list] = {}
+    for e in evs:
+        bucket.setdefault(e.get("domain", "other"), []).append(s(e))
+    by_domain = sorted(
+        ({"key": d, "label": DLABEL.get(d, "Other"),
+          "avg": round(sum(v) / len(v), 2), "count": len(v)} for d, v in bucket.items()),
+        key=lambda x: -x["count"])
+
+    def slim(e):
+        return {"key": e.get("dedupe_key"), "title": e.get("title", ""),
+                "domain": e.get("domain", "other"),
+                "label": DLABEL.get(e.get("domain", "other"), "Other"),
+                "sentiment": round(s(e), 2), "severity": int(e.get("severity") or 1)}
+
+    return {"count": n, "avg": round(avg, 2),
+            "positive": len(pos), "neutral": neu, "negative": len(neg),
+            "by_domain": by_domain,
+            "top_positive": [slim(e) for e in sorted(pos, key=lambda e: -s(e))[:6]],
+            "top_negative": [slim(e) for e in sorted(neg, key=lambda e: s(e))[:6]]}

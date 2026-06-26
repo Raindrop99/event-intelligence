@@ -30,7 +30,8 @@ def _safe(fn, name):
 # (oil & OPEC, sovereign funds, trade). GDELT needs an OR-query in parentheses.
 _GDELT_Q = ('("Abu Dhabi" OR "United Arab Emirates" OR UAE OR Dubai OR "Gulf" OR GCC OR '
             'ADNOC OR Mubadala OR ADIA OR ADQ OR ADGM OR OPEC OR "oil prices" OR '
-            '"sovereign wealth" OR "UAE economy" OR "Gulf trade")')
+            '"sovereign wealth" OR "UAE economy" OR "Gulf trade" OR "Gulf security" OR '
+            '"UAE defence" OR "Strait of Hormuz" OR "Middle East security")')
 
 
 def collect_gdelt(query=_GDELT_Q, n=50):
@@ -114,7 +115,7 @@ def collect_gauges():
 # ---------- keyed (optional) ----------
 
 _GNEWS_Q = ('"Abu Dhabi" OR UAE OR Dubai OR Gulf OR OPEC OR ADNOC OR Mubadala OR '
-            '"oil price" OR "UAE economy"')
+            '"oil price" OR "UAE economy" OR "Gulf security" OR "UAE defence"')
 
 
 def collect_gnews(n=25):
@@ -155,7 +156,8 @@ def collect_newsapi(n=40):
         return []
     # Abu Dhabi / UAE / Gulf + the economic forces that move its economy
     query = ('"Abu Dhabi" OR "United Arab Emirates" OR UAE OR Dubai OR Gulf OR GCC OR '
-             'ADNOC OR Mubadala OR ADIA OR OPEC OR "oil price" OR "sovereign wealth"')
+             'ADNOC OR Mubadala OR ADIA OR OPEC OR "oil price" OR "sovereign wealth" OR '
+             '"Gulf security" OR "UAE defence"')
     r = requests.get("https://newsapi.org/v2/everything",
                      params={"q": query, "language": "en", "pageSize": n,
                              "sortBy": "publishedAt", "apiKey": key},

@@ -2,6 +2,18 @@
 
 export type Urgency = "act" | "review" | "watch" | "none";
 
+export interface SentRow {
+  key: string; title: string; domain: string; label: string;
+  sentiment: number; severity: number;
+}
+export interface SentimentData {
+  count: number; avg: number;
+  positive: number; neutral: number; negative: number;
+  by_domain: { key: string; label: string; avg: number; count: number }[];
+  top_positive: SentRow[];
+  top_negative: SentRow[];
+}
+
 export interface Stats {
   total: number;
   analyzed: number;
@@ -70,6 +82,7 @@ export interface EventItem {
   sentiment: number;
   ai_summary?: string;
   why_it_matters?: string;
+  government_impact?: string;
   impact_summary: string;
   channels: string[];
   winners: string[];

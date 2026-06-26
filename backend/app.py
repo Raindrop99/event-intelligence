@@ -170,14 +170,18 @@ def event_detail(key: str):
     # Every event gets an action plan (steps to reduce the impact) AND an
     # economic-impact assessment — generated on the first view (agent-written,
     # cached) if this event doesn't have them yet. One agent call fills both.
-    warrants = e["action"]["urgency"] != "none" or (e.get("severity") or 1) >= 2
+    # Every event gets insights now — even low-severity / low-certainty news shows an
+    # economic read, why-it-matters and a government-impact line (engaging but honest).
+    # Only the action plan still needs a real action to exist.
+    warrants = True
     need_plan = not e.get("action_plan") and e["action"]["urgency"] != "none"
     need_econ = not e.get("economic_impact") and warrants
     need_after = not e.get("economic_impact_after") and warrants
     need_summary = not e.get("ai_summary") and warrants
     need_why = not e.get("why_it_matters") and warrants
+    need_govt = not e.get("government_impact") and warrants
     need_brief = not e.get("official_brief") and warrants
-    if need_plan or need_econ or need_after or need_summary or need_why or need_brief:
+    if need_plan or need_econ or need_after or need_summary or need_why or need_govt or need_brief:
         enr = analysis.ensure_enrichment(e)
         fields = {}
         if need_plan:
@@ -197,15 +201,17 @@ def event_detail(key: str):
         if need_why and enr.get("why_it_matters"):
             e["why_it_matters"] = enr["why_it_matters"]
             fields["why_it_matters"] = enr["why_it_matters"]
+        if need_govt and enr.get("government_impact"):
+            e["government_impact"] = enr["government_impact"]
+            fields["government_impact"] = enr["government_impact"]
         if need_brief and enr.get("official_brief"):
             e["official_brief"] = enr["official_brief"]
             fields["official_brief"] = enr["official_brief"]
-        # Cache whatever we filled — even the deterministic fallback — so an event
-        # that's been opened once is afterwards served straight from MongoDB and
-        # never re-hits the model. The background pipeline still upgrades any
-        # fallback-filled event to the full agent read later (its prompt_version
-        # stays stale, so requeue_for_reanalysis picks it up).
-        if fields:
+        # Cache ONLY genuine LLM results — never the deterministic fallback — so an
+        # event opened while the daily budget was spent gets a real AI analysis on the
+        # next view (when budget is back) instead of being stuck on the fallback. Real
+        # AI results are then served straight from MongoDB.
+        if fields and enr.get("cacheable"):
             storage.set_fields(key, fields)
     # every article gets a summary — free extractive fallback for anything still
     # missing (low-severity events that skip enrichment, or an empty agent summary)
@@ -213,6 +219,17 @@ def event_detail(key: str):
         e["ai_summary"] = analysis.fallback_summary(e)
     if not e.get("why_it_matters"):
         e["why_it_matters"] = analysis.fallback_why(e)
+    if not e.get("government_impact"):
+        e["government_impact"] = analysis.fallback_govt(e)
+    # every event shows the Official Action Brief and an economic read — fill any that
+    # are still missing (e.g. opened while the AI budget was spent) with the complete
+    # deterministic versions, so the layout is consistent on every article.
+    if not e.get("official_brief"):
+        e["official_brief"] = analysis._fallback_brief(e)
+    if not e.get("economic_impact"):
+        e["economic_impact"] = analysis._fallback_econ(e)
+        e["economic_impact_after"] = analysis._fallback_econ_after(
+            e["economic_impact"], bool(e.get("action_plan")))
     related = storage.related_events(e.get("domain") or "other", key, limit=6)
     for r in related:
         r["action"] = analysis.derive_action(r)
@@ -240,7 +257,8 @@ def action_detail(key: str):
 
 
 _DOMAIN_WORDS = {"market": "markets", "policy": "policy", "disaster": "disasters",
-                 "health": "health", "supply_chain": "supply chains", "other": "general news"}
+                 "defence": "defence & security", "health": "health",
+                 "supply_chain": "supply lines", "other": "general news"}
 
 
 @app.get("/api/overview")
@@ -349,6 +367,24 @@ def dashboard():
     """One payload for the standalone analytics dashboard — severity mix, events
     ingested, market gauges, briefing, top events, domain mix and impact channels."""
     return intel.dashboard()
+
+
+@app.get("/api/topic")
+def topic(slug: str, limit: int = 80):
+    """Recent analysed events matching a sidebar topic (Oil & Gas, Tourism, Exports,
+    Imports, Shipping Lines, Road Accidents, Crime, …). Same shape as /api/events."""
+    evs = intel.topic_events(slug, limit=limit)
+    if evs is None:
+        return JSONResponse({"error": "unknown topic"}, status_code=404)
+    for e in evs:
+        e["action"] = analysis.derive_action(e)
+    return evs
+
+
+@app.get("/api/sentiment")
+def sentiment():
+    """Sentiment scores across recent events — tone, split, by-area, and extremes."""
+    return intel.sentiment_overview()
 
 
 @app.get("/api/recommend")

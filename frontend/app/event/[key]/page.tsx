@@ -167,6 +167,12 @@ export default function EventDetailPage({ params }: { params: Promise<{ key: str
             <div><div className="wm-h">Why it matters to you</div><p>{e.why_it_matters}</p></div>
           </div>
         )}
+        {e.government_impact && (
+          <div className="govimpact">
+            <span className="gov-i">🏛️</span>
+            <div><div className="gov-h">Impact on the Abu Dhabi government</div><p>{e.government_impact}</p></div>
+          </div>
+        )}
         <div className="lbl">What it means</div>
         <div className="sum big2">{e.impact_summary}</div>
         {!!(e.channels && e.channels.length) && (

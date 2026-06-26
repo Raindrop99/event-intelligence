@@ -48,6 +48,12 @@ const ICONS: Record<string, ReactElement> = {
       <circle cx="5.5" cy="18.5" r="2" /><circle cx="17.5" cy="18.5" r="2" />
     </svg>
   ),
+  defence: (
+    <svg viewBox="0 0 24 24" {...sw}>
+      <path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z" />
+      <polyline points="9 12 11 14 15 9.5" />
+    </svg>
+  ),
 };
 
 export function DomainIcon({ d }: { d: string }) {
@@ -161,4 +167,24 @@ export function AnalyticsIcon() {
 }
 export function ReportsIcon() {
   return (<svg viewBox="0 0 24 24" {...sw}><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><polyline points="14 3 14 9 20 9" /><line x1="8" y1="13" x2="16" y2="13" /><line x1="8" y1="17" x2="13" y2="17" /></svg>);
+}
+
+const TOPIC: Record<string, ReactElement> = {
+  oil: (<svg viewBox="0 0 24 24" {...sw}><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z" /></svg>),
+  transport: (<svg viewBox="0 0 24 24" {...sw}><rect x="2" y="6" width="13" height="10" rx="1.5" /><path d="M15 9h4l3 3v4h-7z" /><circle cx="6" cy="18.5" r="1.6" /><circle cx="17.5" cy="18.5" r="1.6" /></svg>),
+  tourism: (<svg viewBox="0 0 24 24" {...sw}><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z" /><circle cx="12" cy="9" r="2.5" /></svg>),
+  export: (<svg viewBox="0 0 24 24" {...sw}><path d="M14 4h6v6" /><path d="M20 4l-8 8" /><path d="M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5" /></svg>),
+  import: (<svg viewBox="0 0 24 24" {...sw}><path d="M4 13v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5" /><path d="M12 3v11" /><polyline points="7 9 12 14 17 9" /></svg>),
+  trade: (<svg viewBox="0 0 24 24" {...sw}><polyline points="7 4 3 8 7 12" /><line x1="3" y1="8" x2="16" y2="8" /><polyline points="17 12 21 16 17 20" /><line x1="21" y1="16" x2="8" y2="16" /></svg>),
+  ship: (<svg viewBox="0 0 24 24" {...sw}><path d="M3 14l1.4 5a2 2 0 0 0 1.9 1.4h11.4a2 2 0 0 0 1.9-1.4L21 14" /><path d="M5.5 14V9a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v5" /><line x1="12" y1="3" x2="12" y2="8" /></svg>),
+  roadalert: (<svg viewBox="0 0 24 24" {...sw}><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h16.9a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>),
+  crime: (<svg viewBox="0 0 24 24" {...sw}><path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="15" x2="12.01" y2="15" /></svg>),
+};
+
+export function TopicIcon({ name }: { name: string }) {
+  return TOPIC[name] ?? TOPIC.oil;
+}
+
+export function SentimentIcon() {
+  return (<svg viewBox="0 0 24 24" {...sw}><circle cx="12" cy="12" r="9" /><path d="M8.5 14.5s1.3 2 3.5 2 3.5-2 3.5-2" /><line x1="9" y1="9.5" x2="9.01" y2="9.5" /><line x1="15" y1="9.5" x2="15.01" y2="9.5" /></svg>);
 }
