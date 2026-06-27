@@ -24,10 +24,24 @@ export const useFilter = () => useContext(FilterCtx);
 
 export function Providers({ children }: { children: ReactNode }) {
   const [urgency, setUrgency] = useState("all");
-  // Read the mode the no-flash script already applied, so the toggle icon is
-  // correct on first paint (the <html data-mode> drives the CSS regardless).
-  const [mode, setMode] = useState<string>(() =>
-    typeof document !== "undefined" ? document.documentElement.dataset.mode || "dark" : "dark");
+  const [mode, setMode] = useState<string>("dark");
+  const [density, setDensity] = useState<string>("comfortable");
+
+  useEffect(() => {
+    const initialMode = typeof document !== "undefined"
+      ? document.documentElement.dataset.mode || "dark"
+      : "dark";
+    setMode(initialMode);
+
+    try {
+      const saved = localStorage.getItem("eii-density");
+      const initialDensity = saved === "compact" ? "compact" : "comfortable";
+      setDensity(initialDensity);
+    } catch {
+      setDensity("comfortable");
+    }
+  }, []);
+
   const toggle = useCallback(() => {
     setMode((prev) => {
       const next = prev === "dark" ? "light" : "dark";
@@ -38,10 +52,6 @@ export function Providers({ children }: { children: ReactNode }) {
   }, []);
 
   // view density (Edit view button): comfortable | compact
-  const [density, setDensity] = useState<string>(() => {
-    if (typeof document === "undefined") return "comfortable";
-    try { return localStorage.getItem("eii-density") || "comfortable"; } catch { return "comfortable"; }
-  });
   useEffect(() => {
     document.documentElement.dataset.density = density;
     try { localStorage.setItem("eii-density", density); } catch {}
