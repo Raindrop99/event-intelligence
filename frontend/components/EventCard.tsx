@@ -30,6 +30,10 @@ export default function EventCard({ e }: { e: EventItem }) {
   const conf = e.confidence || 0;
   const wins = e.winners || [];
   const lose = e.losers || [];
+  const before = e.economic_impact;
+  const after = e.economic_impact_after;
+  const showProjection = !!(before || after);
+  const projectedDrop = before && after ? Math.max(0, before.score - after.score) : 0;
 
   return (
     <div className="card" style={{ "--sev": SEV[e.severity] || SEV[1] } as CSSProperties}>
@@ -64,8 +68,25 @@ export default function EventCard({ e }: { e: EventItem }) {
         </>
       )}
       {e.second_order && <div className="second"><b>Knock-on:</b> {e.second_order}</div>}
+      {showProjection && (
+        <div className="projbox">
+          <div className="projhead">Projection insight</div>
+          <div className="projscore">
+            <span className="projpill before">Now {before?.score ?? 0}/100</span>
+            <span className="projarrow">→</span>
+            <span className="projpill after">After {after?.score ?? 0}/100</span>
+          </div>
+          <div className="projtxt">
+            {(after?.summary || before?.summary || "").trim() || "The projected impact should fall if the plan is followed."}
+          </div>
+          {projectedDrop > 0 && <div className="projdiff">Expected reduction: {projectedDrop} points</div>}
+        </div>
+      )}
       <ActionRow a={e.action} />
-      <Link className="detailslink" href={link}>View full breakdown →</Link>
+      <div className="card-actions">
+        <Link className="detailslink" href={link}>View full breakdown →</Link>
+        {showProjection && <Link className="detailslink secondary" href={`/event/${encodeURIComponent(e.dedupe_key || "")}/projection`}>Open projection insights →</Link>}
+      </div>
     </div>
   );
 }

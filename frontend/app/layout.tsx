@@ -18,13 +18,13 @@ export const metadata: Metadata = {
   description: "Live news, read for Abu Dhabi — economic impact and actions for government officials.",
 };
 
-// Apply the saved light/dark mode before first paint to avoid a flash. Dark is the default.
+// Apply the saved light/dark mode before first paint to avoid a flash. Light is the default until the user changes it.
 const themeScript =
-  "try{document.documentElement.dataset.mode=localStorage.getItem('eii-mode')||'dark';}catch(e){}";
+  "try{const saved=localStorage.getItem('eii-mode'); document.documentElement.dataset.mode=saved||'light';}catch(e){document.documentElement.dataset.mode='light';}";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-mode="dark" className={`${mont.variable} ${mono.variable}`}>
+    <html lang="en" data-mode="light" className={`${mont.variable} ${mono.variable}`}>
       <body>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <Providers>

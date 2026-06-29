@@ -46,11 +46,14 @@ function Gauges() {
 
 export default function Home() {
   const { urgency } = useFilter();
-  const { data, error } = useApi<EventItem[]>("/api/events");
+  const { data, error } = useApi<EventItem[]>("/api/events?limit=80");
   const [sortBy, setSortBy] = useState<SortBy>("new");
   const [showLegend, setShowLegend] = useState(false);
 
   const events = data ?? [];
+  const now = Date.now() / 1000;
+  const recentWithin6h = events.filter((e) => now - e.ts <= 6 * 3600).length;
+  const projectionReady = events.filter((e) => e.action_plan || e.economic_impact || e.economic_impact_after || e.official_brief).length;
   const filtered = sortEvents(
     events.filter((e) => urgency === "all" || (e.action && e.action.urgency === urgency)),
     sortBy,
@@ -60,6 +63,15 @@ export default function Home() {
     <>
       <Brief />
       <Gauges />
+      <div className="brief" style={{ marginTop: 12, borderColor: "var(--accent)" }}>
+        <h3>Live and recent events</h3>
+        <div className="bl">This view is prioritized to show the freshest headlines and the latest projection-ready updates from the last 24 hours.</div>
+        <div className="bchips">
+          <span className="bchip"><b>{events.length}</b> current items</span>
+          <span className="bchip"><b>{recentWithin6h}</b> from the last 6 hours</span>
+          <span className="bchip"><b>{projectionReady}</b> with projection insight</span>
+        </div>
+      </div>
       <div className="layout">
         <div className="main">
           <div className="feedbar">
@@ -67,7 +79,10 @@ export default function Home() {
               <button className={`segb ${sortBy === "impact" ? "on" : ""}`} onClick={() => setSortBy("impact")}>Important first</button>
               <button className={`segb ${sortBy === "new" ? "on" : ""}`} onClick={() => setSortBy("new")}>Newest first</button>
             </div>
-            <button className="helpb" onClick={() => setShowLegend((s) => !s)}>? How to read this</button>
+            <div className="seg">
+              <span className="bchip"><b>Live</b> recent feed</span>
+              <button className="helpb" onClick={() => setShowLegend((s) => !s)}>? How to read this</button>
+            </div>
           </div>
           {showLegend && (
             <div className="legend">

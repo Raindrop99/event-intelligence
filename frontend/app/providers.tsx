@@ -6,9 +6,15 @@ import { api } from "@/lib/api";
 
 /* ---------------- theme (light / dark) + density (comfortable / compact) ---------------- */
 const ThemeCtx = createContext<{ mode: string; toggle: () => void; density: string; toggleDensity: () => void }>({
-  mode: "dark", toggle: () => {}, density: "comfortable", toggleDensity: () => {},
+  mode: "light", toggle: () => {}, density: "comfortable", toggleDensity: () => {},
 });
 export const useTheme = () => useContext(ThemeCtx);
+
+/* ---------------- mobile nav drawer ---------------- */
+const MobileNavCtx = createContext<{ mobileNavOpen: boolean; toggleMobileNav: () => void; closeMobileNav: () => void }>({
+  mobileNavOpen: false, toggleMobileNav: () => {}, closeMobileNav: () => {},
+});
+export const useMobileNav = () => useContext(MobileNavCtx);
 
 /* ---------------- refresh (manual + 60s poll tick) ---------------- */
 const RefreshCtx = createContext<{ tick: number; refreshing: boolean; refreshNow: () => void; bump: () => void }>({
@@ -24,13 +30,14 @@ export const useFilter = () => useContext(FilterCtx);
 
 export function Providers({ children }: { children: ReactNode }) {
   const [urgency, setUrgency] = useState("all");
-  const [mode, setMode] = useState<string>("dark");
+  const [mode, setMode] = useState<string>("light");
   const [density, setDensity] = useState<string>("comfortable");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
     const initialMode = typeof document !== "undefined"
-      ? document.documentElement.dataset.mode || "dark"
-      : "dark";
+      ? document.documentElement.dataset.mode || "light"
+      : "light";
     setMode(initialMode);
 
     try {
@@ -49,6 +56,17 @@ export function Providers({ children }: { children: ReactNode }) {
       try { localStorage.setItem("eii-mode", next); } catch {}
       return next;
     });
+  }, []);
+
+  const toggleMobileNav = useCallback(() => setMobileNavOpen((prev) => !prev), []);
+  const closeMobileNav = useCallback(() => setMobileNavOpen(false), []);
+
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth > 920) setMobileNavOpen(false);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   // view density (Edit view button): comfortable | compact
@@ -73,9 +91,11 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <ThemeCtx.Provider value={{ mode, toggle, density, toggleDensity }}>
-      <RefreshCtx.Provider value={{ tick, refreshing, refreshNow, bump }}>
-        <FilterCtx.Provider value={{ urgency, setUrgency }}>{children}</FilterCtx.Provider>
-      </RefreshCtx.Provider>
+      <MobileNavCtx.Provider value={{ mobileNavOpen, toggleMobileNav, closeMobileNav }}>
+        <RefreshCtx.Provider value={{ tick, refreshing, refreshNow, bump }}>
+          <FilterCtx.Provider value={{ urgency, setUrgency }}>{children}</FilterCtx.Provider>
+        </RefreshCtx.Provider>
+      </MobileNavCtx.Provider>
     </ThemeCtx.Provider>
   );
 }

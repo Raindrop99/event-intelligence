@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useApi, useTheme, useRefresh } from "@/app/providers";
+import { useApi, useTheme, useRefresh, useMobileNav } from "@/app/providers";
 import { SearchIcon, MiniIcon } from "@/components/icons";
 import type { Stats, Todos } from "@/lib/types";
 
@@ -10,6 +10,7 @@ export default function Taskbar() {
   const router = useRouter();
   const { mode, toggle, density, toggleDensity } = useTheme();
   const { refreshing, refreshNow } = useRefresh();
+  const { toggleMobileNav } = useMobileNav();
   const { data: stats } = useApi<Stats>("/api/stats");
   const { data: todos } = useApi<Todos>("/api/todos");
   const live = !!stats;
@@ -26,6 +27,10 @@ export default function Taskbar() {
       </div>
 
       <div className="top-actions">
+        <button type="button" className="icon-btn mobile-only" aria-label="Toggle navigation" onClick={toggleMobileNav}>
+          <span style={{ fontSize: 18 }}>☰</span>
+        </button>
+
         <span className={`live-dot${live ? " on" : ""}`}><i /> {live ? "Live" : "Connecting…"}</span>
 
         <button type="button" className="icon-btn" aria-label="Search" onClick={() => router.push("/search")}>

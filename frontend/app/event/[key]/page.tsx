@@ -191,6 +191,11 @@ export default function EventDetailPage({ params }: { params: Promise<{ key: str
           <><div className="lbl">Knock-on effect</div><div className="second2">{e.second_order}</div></>
         )}
         <ActionRow a={e.action} />
+        {(showBefore || showAfter || !!e.official_brief) && (
+          <div className="projection-cta-row">
+            <Link className="detailslink" href={`/event/${encodeURIComponent(e.dedupe_key || "")}/projection`}>Open premium projection insights →</Link>
+          </div>
+        )}
         {!!(e.action_plan && e.action_plan.length) && (
           <>
             <div className="lbl">Action plan to reduce the impact</div>
@@ -249,6 +254,19 @@ export default function EventDetailPage({ params }: { params: Promise<{ key: str
             {!!(b.keywords && b.keywords.length) && <div className="ilbl">Matched words: {b.keywords.join(", ")}</div>}
           </>
         )}
+
+        <div className="news-projection-card">
+          <div className="news-projection-head">
+            <div className="news-projection-icon">✦</div>
+            <div>
+              <div className="news-projection-title">Projection insights for this news</div>
+              <div className="news-projection-copy">See how this story could evolve, what could change next, and which risks or opportunities are most likely.</div>
+            </div>
+          </div>
+          <Link className="detailslink news-projection-btn" href={`/event/${encodeURIComponent(e.dedupe_key || "")}/projection`}>
+            Go to projection insights →
+          </Link>
+        </div>
       </div>
       <div className="detail">
         <div className="lbl" style={{ marginTop: 0 }}>Related {(DLABEL[e.domain] || "other").toLowerCase()} events</div>

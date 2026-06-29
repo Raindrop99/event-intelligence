@@ -2,7 +2,7 @@
 
 This is the API only; the UI is the separate Next.js app in ../frontend.
 
-Run:    uvicorn app:app --port 8000   (or: python app.py)
+Run:   uvicorn app:app --port 8000    (or: python app.py)
 Docs:   http://localhost:8000/docs
 """
 import logging
@@ -96,6 +96,12 @@ def events(domain: str | None = None, limit: int = 60):
     evs = storage.recent_events(domain=domain, limit=limit, max_age_hours=DATA_MAX_AGE_HOURS)
     for e in evs:
         e["action"] = analysis.derive_action(e)
+        if not e.get("economic_impact"):
+            e["economic_impact"] = analysis._fallback_econ(e)
+        if not e.get("economic_impact_after"):
+            e["economic_impact_after"] = analysis._fallback_econ_after(
+                e["economic_impact"], bool(e.get("action_plan"))
+            )
     return evs
 
 

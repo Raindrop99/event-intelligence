@@ -1,8 +1,8 @@
 "use client";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme, useRefresh } from "@/app/providers";
+import { useTheme, useRefresh, useMobileNav } from "@/app/providers";
 import Modal from "./Modal";
 import {
   BrandLogo, DashboardIcon, AnalyticsIcon, DomainIcon, SearchIcon,
@@ -39,6 +39,7 @@ const SAFETY: Item[] = [
 ];
 
 const WORKSPACE: Item[] = [
+  { href: "/projections", label: "Projection insights", icon: <AnalyticsIcon />, tag: "New" },
   { href: "/", label: "All events", icon: <DomainIcon d="all" /> },
   { href: "/table", label: "Events table", icon: <TableIcon /> },
   { href: "/trends", label: "Trends", icon: <TrendsIcon /> },
@@ -50,11 +51,16 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { mode, toggle, density, toggleDensity } = useTheme();
   const { refreshNow, refreshing } = useRefresh();
+  const { mobileNavOpen, toggleMobileNav, closeMobileNav } = useMobileNav();
   const [dlg, setDlg] = useState<null | "help" | "settings">(null);
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
+  useEffect(() => {
+    closeMobileNav();
+  }, [pathname, closeMobileNav]);
+
   const NavItem = ({ item }: { item: Item }) => (
-    <Link href={item.href} className={`nitem ${isActive(item.href) ? "on" : ""}`}>
+    <Link href={item.href} className={`nitem ${isActive(item.href) ? "on" : ""}`} onClick={closeMobileNav}>
       {item.icon}<span className="nav-label">{item.label}</span>
       {item.tag && <span className="nav-tag">{item.tag}</span>}
     </Link>
@@ -62,8 +68,12 @@ export default function Sidebar() {
 
   return (
     <>
-    <aside className="side">
+    <div className={`mobile-nav-backdrop ${mobileNavOpen ? "open" : ""}`} onClick={closeMobileNav} role="presentation" />
+    <aside className={`side ${mobileNavOpen ? "open" : ""}`}>
       <div className="brand">
+        <button type="button" className="mobile-nav-toggle" aria-label="Toggle navigation" onClick={toggleMobileNav}>
+          <span />
+        </button>
         <span className="blogo"><BrandLogo /></span>
         <span className="bname">Abu Dhabi<br /><em>Economic Intel</em></span>
       </div>
